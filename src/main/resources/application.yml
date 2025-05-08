@@ -1,0 +1,61 @@
+---
+spring:
+  profiles: dev, default
+  application:
+    name: order-service
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: "password"
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:pm_oleo_multas}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  logging:
+    level:
+      org:
+        springframework: info
+      root: info
+    file:
+      max-size: 10MB
+      max-history: 10
+    pattern:
+      file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    path: ./public/logs/dev/@project.artifactId@-@project.version@
+
+---
+spring:
+  profiles: prod
+  application:
+    name: order-service
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: "password"
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:pm_oleo_multas}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  logging:
+    level:
+      org:
+        springframework: info
+      root: info
+    file:
+      max-size: 10MB
+      max-history: 10
+    pattern:
+      file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    path: ./public/logs/dev/@project.artifactId@-@project.version@

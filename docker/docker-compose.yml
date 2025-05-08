@@ -1,0 +1,33 @@
+version: '2'
+services:
+  db-postgres:
+    image: postgres:15.3-alpine
+    container_name: db-postgres-pm-oleo-multas
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: pm_oleo_multas
+    volumes:
+      - ./public/database:/var/lib/postgresql
+    ports:
+      - 5432:5432
+  order-service:
+    image: registry.finch.local/ash-alpine-jdk21:latest
+    container_name: integration-api-bslex
+    restart: always
+    volumes:
+      - "./public/:/public"
+      - "./integration.jar:/integration.jar"
+    environment:
+      - "TZ=America/Sao_Paulo"
+      - "SPRING_PROFILES_ACTIVE=prod"
+      - "crawler.application.name=Finch Soluções - Bradesco Seguros [Integration]"
+    entrypoint:
+      - "java"
+      - "-Dlog4j2.formatMsgNoLookups=true"
+      - "-jar"
+      - "-Xms1024m"
+      - "-Xmx2048m"
+      - "integration.jar"
+    network_mode: bridge
