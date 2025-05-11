@@ -1,33 +1,41 @@
 version: '2'
 services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - ./redis_data:/data
   db-postgres:
     image: postgres:15.3-alpine
-    container_name: db-postgres-pm-oleo-multas
+    container_name: db-postgres-order
     restart: always
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
-      POSTGRES_DB: pm_oleo_multas
+      POSTGRES_DB: order_db
     volumes:
-      - ./public/database:/var/lib/postgresql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
   order-service:
     image: registry.finch.local/ash-alpine-jdk21:latest
-    container_name: integration-api-bslex
+    container_name: order-service
     restart: always
     volumes:
       - "./public/:/public"
-      - "./integration.jar:/integration.jar"
+      - "./output-order-service.jar:/output-order-service.jar"
     environment:
       - "TZ=America/Sao_Paulo"
       - "SPRING_PROFILES_ACTIVE=prod"
-      - "crawler.application.name=Finch Soluções - Bradesco Seguros [Integration]"
     entrypoint:
       - "java"
       - "-Dlog4j2.formatMsgNoLookups=true"
       - "-jar"
       - "-Xms1024m"
       - "-Xmx2048m"
-      - "integration.jar"
+      - "output-order-service.jar"
     network_mode: bridge

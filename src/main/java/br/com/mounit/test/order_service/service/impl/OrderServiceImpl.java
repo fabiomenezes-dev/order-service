@@ -8,7 +8,12 @@ import br.com.mounit.test.order_service.domain.enuns.StatusEnum;
 import br.com.mounit.test.order_service.domain.exceptions.OrderNotFoundException;
 import br.com.mounit.test.order_service.service.OrderInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -16,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+@Service
 public class OrderServiceImpl implements OrderInterface {
 
     private final OrderRepository orderRepository;
@@ -26,10 +32,10 @@ public class OrderServiceImpl implements OrderInterface {
     }
 
     @Override
-    public Double sumProducts(Set<ProductDTO> productDTOSet) {
-        return productDTOSet.stream()
-                .map(ProductDTO::getValueUnit)
-                .reduce(0.0, Double::sum);
+    public Double sumProducts(Set<ProductDTO> products) {
+        return products.stream()
+                .mapToDouble(product -> product.getValueUnit() * product.getUnits())
+                .sum();
     }
 
     @Override
@@ -39,12 +45,12 @@ public class OrderServiceImpl implements OrderInterface {
 
     @Async
     public CompletableFuture<String> processAsync(OrderDTO orderDTO) {
-        Double sum = sumProducts(orderDTO.getProductDTOSet()); // simula um processamento demorado
+        Double sum = sumProducts(orderDTO.getProductDTOSet());
         OrderEntity orderEntity = OrderEntity.builder()
                 .total(sum)
                 .status(StatusEnum.COMPLETED.getDescription())
                 .build();
-        saveOrder(orderEntity);
+        orderRepository.save(orderEntity);
         return CompletableFuture.completedFuture("Processamento concluído");
     }
 
@@ -53,9 +59,18 @@ public class OrderServiceImpl implements OrderInterface {
         return Set.of();
     }
 
+
     @Override
+    @Transactional(readOnly = true)
+    public Page<OrderDTO> getAll(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(this::toOrderDTO);
+    }
+
+    @Override
+    @Cacheable("orders")
     public OrderDTO getAllById(Long id) throws Exception {
-        return orderRepository.findById(id)
+        return orderRepository.findWithProductsById(id)
                 .map(this::toOrderDTO)
                 .orElseThrow(() -> new OrderNotFoundException("Order-ID:  ".concat(id.toString()).concat(" não encontrado na base de dados.")));
     }

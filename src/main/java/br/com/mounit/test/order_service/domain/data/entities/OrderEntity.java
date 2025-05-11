@@ -1,9 +1,13 @@
 package br.com.mounit.test.order_service.domain.data.entities;
 
-import br.com.mounit.test.order_service.domain.dtos.ProductDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.context.annotation.Lazy;
@@ -12,15 +16,12 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
-@Lazy
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "order", schema = "order_service")
-//@Where(clause = " deleted is null ")
+@Table(name = "orders")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@EqualsAndHashCode(callSuper = false)
 public class OrderEntity {
 
     @Id
@@ -34,8 +35,10 @@ public class OrderEntity {
     @Column(name = "status", nullable = false)
     private String status;
 
-
-    private Set<ProductDTO> productDTOSet;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @BatchSize(size = 50)
+    @JsonManagedReference
+    private Set<ProductEntity> productDTOSet;
 
     @Column(name = "updated")
     @UpdateTimestamp

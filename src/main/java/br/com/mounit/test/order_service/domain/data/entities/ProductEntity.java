@@ -1,8 +1,8 @@
 package br.com.mounit.test.order_service.domain.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.context.annotation.Lazy;
 
@@ -12,15 +12,26 @@ import org.springframework.context.annotation.Lazy;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "product", schema = "order_service")
-//@Where(clause = " deleted is null ")
+@Table(name = "product")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@EqualsAndHashCode(callSuper = false)
 public class ProductEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private long id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "valueUnit", nullable = false)
     private Double valueUnit;
+
+    @Column(name = "units", nullable = false)
     private int units;
-    private OrderEntity orderEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
+    private OrderEntity order;
 }
