@@ -4,7 +4,13 @@ import br.com.mounit.test.order_service.domain.dtos.OrderDTO;
 import br.com.mounit.test.order_service.domain.enuns.StatusEnum;
 import br.com.mounit.test.order_service.domain.exceptions.OrderNotFoundException;
 import br.com.mounit.test.order_service.service.OrderInterface;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +29,7 @@ import java.util.Set;
 @Validated
 @RestController
 @RequestMapping("/v1/order")
-@Api(tags = "Order Management")
+@Tag(name = "Order Management", description = "Endpoints for managing orders")
 public class OrderController {
 
     public static final String LOG_MSG_IP_ORIGEM = "# IP origem: {}";
@@ -34,39 +40,40 @@ public class OrderController {
         this.orderInterface = orderInterface;
     }
 
-    @ApiOperation(value = "Retrieve all orders (paginated)", response = Page.class)
+    @Operation(summary = "Retrieve all orders (paginated)", description = "Returns a paginated list of all orders")
     @GetMapping("/all")
     public ResponseEntity<Page<OrderDTO>> getAllPageable(
-            @ApiParam(value = "Pagination information") Pageable pageable, HttpServletRequest request) {
+            @Parameter(description = "Pagination information") Pageable pageable,
+            HttpServletRequest request) {
         log.info(LOG_MSG_IP_ORIGEM, request.getRemoteAddr());
         return ResponseEntity.ok(orderInterface.getAll(pageable));
     }
 
-    @ApiOperation(value = "Retrieve an order by ID", response = OrderDTO.class)
+    @Operation(summary = "Retrieve an order by ID", description = "Find an order by its ID")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Order found"),
-            @ApiResponse(code = 404, message = "Order not found")
+            @ApiResponse(responseCode = "200", description = "Order found"),
+            @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
     })
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> getOrderById(
-            @ApiParam(value = "ID of the order", required = true) @PathVariable Long orderId, HttpServletRequest request) throws Exception {
+            @Parameter(description = "ID of the order", required = true) @PathVariable Long orderId,
+            HttpServletRequest request) throws Exception {
         log.info(LOG_MSG_IP_ORIGEM, request.getRemoteAddr());
         log.info("Buscando pedido pelo ID: {}", orderId);
         return ResponseEntity.ok(orderInterface.getAllById(orderId));
     }
 
-
-    @ApiOperation(value = "Retrieve orders by status (paginated)", response = Page.class)
+    @Operation(summary = "Retrieve orders by status (paginated)", description = "Returns orders filtered by status")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Orders found"),
-            @ApiResponse(code = 204, message = "No orders found with the given status"),
-            @ApiResponse(code = 400, message = "Invalid status provided")
+            @ApiResponse(responseCode = "200", description = "Orders found"),
+            @ApiResponse(responseCode = "204", description = "No orders found with the given status", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid status provided", content = @Content)
     })
     @GetMapping("/status/{status}")
     public ResponseEntity<Page<Set<OrderDTO>>> getOrdersByStatus(
-            @ApiParam(value = "Status of the orders to retrieve (PENDING, PROCESSING, COMPLETED)", required = true)
+            @Parameter(description = "Status of the orders to retrieve (PENDING, PROCESSING, COMPLETED)", required = true)
             @PathVariable String status,
-            @ApiParam(value = "Pagination information") Pageable pageable) {
+            @Parameter(description = "Pagination information") Pageable pageable) {
         try {
             StatusEnum statusEnum = StatusEnum.valueOf(status.toUpperCase());
             Page<Set<OrderDTO>> ordersByStatus = orderInterface.getAllByStatus(statusEnum.name(), pageable);
@@ -79,15 +86,17 @@ public class OrderController {
         }
     }
 
-    @ApiOperation(value = "Receive and process an order", response = String.class)
+    @Operation(summary = "Receive and process an order", description = "Accepts and processes a new order")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Order received successfully"),
-            @ApiResponse(code = 400, message = "Validation failed")
+            @ApiResponse(responseCode = "200", description = "Order received successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed", content = @Content)
     })
     @PostMapping("/receive")
     public ResponseEntity<String> receive(
-            @ApiParam(value = "Order data to be processed", required = true)
-            @Valid @RequestBody OrderDTO orderDTO, HttpServletRequest request) throws OrderNotFoundException {
+            @Parameter(description = "Order data to be processed", required = true,
+                    content = @Content(schema = @Schema(implementation = OrderDTO.class)))
+            @Valid @RequestBody OrderDTO orderDTO,
+            HttpServletRequest request) throws OrderNotFoundException {
         log.info(LOG_MSG_IP_ORIGEM, request.getRemoteAddr());
         log.info("Recebendo pedido: {}", orderDTO);
         return ResponseEntity.ok(orderInterface.process(orderDTO));
