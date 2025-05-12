@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,28 +45,30 @@ public class RepositoryTest {
         assertEquals("Repository Product", found.get().getName());
     }
 
-//    @Test
-//    public void testSaveAndFindOrder() {
-//        // Criando a ordem primeiro
-//        OrderEntity order = new OrderEntity();
-//        order.setStatus(StatusEnum.COMPLETED.getDescription());
-//        order.setTotal(0.0);
-//
-//        // Criando o produto e associando à ordem
-//        ProductEntity product = new ProductEntity();
-//        product.setName("Order Product");
-//        product.setUnits(1);
-//        product.setValueUnit(1.0);
-//        product.setOrder(order); // Associando o produto à ordem
-//
-//        // Salvando a ordem
-//        OrderEntity savedOrder = orderRepository.save(order);
-//
-//        // Buscando e verificando a ordem
-//        Optional<OrderEntity> foundOrder = orderRepository.findById(savedOrder.getId());
-//        assertTrue(foundOrder.isPresent());
-//        assertEquals(StatusEnum.COMPLETED.getDescription(), foundOrder.get().getStatus());
-//        assertEquals(1, foundOrder.get().getProductDTOSet().size());
-//    }
+    @Test
+    public void testSaveAndFindOrder() {
+        // Criando a ordem primeiro
+        OrderEntity order = new OrderEntity();
+        order.setStatus(StatusEnum.COMPLETED.getDescription());
+        order.setTotal(0.0);
+        order.setClientId(1L);
+
+        // Criando o produto e associando à ordem
+        ProductEntity product = new ProductEntity();
+        product.setName("Order Product");
+        product.setUnits(1);
+        product.setValueUnit(1.0);
+        product.setOrder(order);
+
+        order.setProductDTOSet(Set.of(product));
+        // Salvando a ordem
+        OrderEntity savedOrder = orderRepository.save(order);
+
+        // Buscando e verificando a ordem
+        Optional<OrderEntity> foundOrder = orderRepository.findWithProductsById(savedOrder.getId());
+        assertTrue(foundOrder.isPresent());
+        assertEquals(StatusEnum.COMPLETED.getDescription(), foundOrder.get().getStatus());
+        assertEquals(1, foundOrder.get().getProductDTOSet().size());
+    }
 
 }

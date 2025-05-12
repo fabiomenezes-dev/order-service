@@ -129,7 +129,7 @@ class OrderControllerTest {
 
     @Test
     void processOrder_duplicateOrderExists_shouldThrowDuplicateOrderException() throws Exception {
-        // Arrange
+
         OrderDTO duplicateOrderDTO = new OrderDTO();
         duplicateOrderDTO.setClientId(123L);
         duplicateOrderDTO.setTotal(99.99);
@@ -142,7 +142,6 @@ class OrderControllerTest {
                 any(LocalDateTime.class)
         )).thenReturn(true);
 
-        // Act & Assert
         DuplicateOrderException exception = assertThrows(DuplicateOrderException.class, () -> {
             orderService.process(duplicateOrderDTO);
         });

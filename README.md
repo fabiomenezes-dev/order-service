@@ -5,11 +5,12 @@
 
 ## Descrição
 
-Uma descrição concisa e envolvente do seu projeto. Explique o que ele faz, qual problema ele resolve e qual é o seu objetivo principal.
+> Este projeto tem como objetivo a demonstração da capacidade tecnica, para o processo seletivo em uma nova empresa. Desta forma, este projeto é uma API RESTful construída com Spring Boot para gerenciar pedidos de uma loja online. Ele permite criar, visualizar, atualizar e cancelar pedidos, além de gerenciar os produtos associados a cada pedido. O objetivo principal é fornecer uma base robusta e escalável para o backend da plataforma de e-commerce.
 
-**Exemplo:**
+### Desafio proposto:
 
-> Este projeto é uma API RESTful construída com Spring Boot para gerenciar pedidos de uma loja online. Ele permite criar, visualizar, atualizar e cancelar pedidos, além de gerenciar os produtos associados a cada pedido. O objetivo principal é fornecer uma base robusta e escalável para o backend da plataforma de e-commerce.
+<img src="src/main/resources/img/NOVO TESTE JAVA - AMBEV  (3).jpg">
+
 
 ## Funcionalidades Principais
 
@@ -114,7 +115,7 @@ Este projeto está licenciado sob a [MIT License](https://opensource.org/license
 
 ## Autor
 
-[Fábio Augusto Vicente de Menezes](https://www.linkedin.com/in/fabioavmenezes/)
+[Fábio Augusto Vieira de Menezes](https://www.linkedin.com/in/fabioavmenezes/)
 
 
 ## Status do Projeto
