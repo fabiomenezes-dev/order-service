@@ -1,6 +1,7 @@
 package br.com.mounit.test.order_service.domain.dtos;
 
 import br.com.mounit.test.order_service.domain.data.entities.OrderEntity;
+import br.com.mounit.test.order_service.domain.data.entities.ProductEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -28,5 +29,12 @@ public class ProductDTO {
     @Min(value = 1, message = "A quantidade mínima de unidades é 1")
     private int units;
 
-    private OrderEntity order;
+    public static ProductEntity toProductEntity(ProductDTO productDTO, OrderEntity orderEntity) {
+        return ProductEntity.builder()
+                .order(orderEntity)
+                .units(productDTO.getUnits())
+                .name(productDTO.getName())
+                .valueUnit(productDTO.getValueUnit())
+                .build();
+    }
 }

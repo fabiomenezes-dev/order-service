@@ -3,11 +3,11 @@ package br.com.mounit.test.order_service.service;
 import br.com.mounit.test.order_service.domain.data.entities.OrderEntity;
 import br.com.mounit.test.order_service.domain.dtos.OrderDTO;
 import br.com.mounit.test.order_service.domain.dtos.ProductDTO;
+import br.com.mounit.test.order_service.domain.exceptions.OrderNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 public interface OrderInterface {
 
@@ -17,9 +17,9 @@ public interface OrderInterface {
 
     Page<OrderDTO> getAll(Pageable pageable);
 
-    CompletableFuture<String> processAsync(OrderDTO orderDTO);
+    String process(OrderDTO orderDTO) throws OrderNotFoundException;
 
-    Set<OrderDTO> getAllByStatus(String status);
+    Page<Set<OrderDTO>> getAllByStatus(String status, Pageable pageable);
 
     OrderDTO getAllById(Long id) throws Exception;
 

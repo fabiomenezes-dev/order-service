@@ -3,14 +3,10 @@ package br.com.mounit.test.order_service.domain.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -29,15 +25,20 @@ public class OrderEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "client_id", nullable = false)
+    private Long clientId;
+
     @Column(name = "total", nullable = false)
     private Double total;
 
     @Column(name = "status", nullable = false)
     private String status;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @BatchSize(size = 50)
     @JsonManagedReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<ProductEntity> productDTOSet;
 
     @Column(name = "updated")

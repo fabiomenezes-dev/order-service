@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,8 +37,8 @@ public class OrderServiceImplTest {
     @Test
     void testSumProducts() {
         Set<ProductDTO> products = new HashSet<>();
-        products.add(new ProductDTO("Product 1", 10.0, 1, null));
-        products.add(new ProductDTO("Product 2", 20.0, 2, null));
+        products.add(new ProductDTO("Product 1", 10.0, 1));
+        products.add(new ProductDTO("Product 2", 20.0, 2));
 
         Double sum = orderService.sumProducts(products);
 
@@ -64,15 +63,13 @@ public class OrderServiceImplTest {
     @Test
     void testProcessAsync() throws Exception {
         Set<ProductDTO> productDTOSet = new HashSet<>();
-        productDTOSet.add(new ProductDTO("Product 1", 10.0, 1, null));
-        productDTOSet.add(new ProductDTO("Product 2", 20.0, 2, null));
+        productDTOSet.add(new ProductDTO("Product 1", 10.0, 1));
+        productDTOSet.add(new ProductDTO("Product 2", 20.0, 2));
 
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setProductDTOSet(productDTOSet);
 
-        CompletableFuture<String> result = orderService.processAsync(orderDTO);
-
-        String response = result.get();
+        String response = orderService.process(orderDTO);
 
         assertEquals("Processamento concluído", response);
         Mockito.verify(orderRepository, Mockito.times(1)).save(Mockito.any());

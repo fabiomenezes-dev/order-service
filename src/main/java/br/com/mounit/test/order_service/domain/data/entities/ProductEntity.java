@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.context.annotation.Lazy;
 
 @Data
-@Lazy
 @Entity
 @Builder
 @NoArgsConstructor
@@ -33,5 +32,7 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     @JsonBackReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private OrderEntity order;
 }

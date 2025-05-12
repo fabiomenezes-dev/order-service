@@ -28,6 +28,7 @@ public class RepositoryTest {
         OrderEntity order = new OrderEntity();
         order.setStatus(StatusEnum.PENDING.getDescription());
         order.setTotal(0.0);
+        order.setClientId(1L);
         OrderEntity savedOrder = orderRepository.save(order);
 
         ProductEntity product = new ProductEntity();
