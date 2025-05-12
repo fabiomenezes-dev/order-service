@@ -1,0 +1,41 @@
+version: '2'
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - ./redis_data:/data
+  db-postgres:
+    image: postgres:15.3-alpine
+    container_name: db-postgres-order
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: order_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432
+  order-service:
+    image: registry.finch.local/ash-alpine-jdk21:latest
+    container_name: order-service
+    restart: always
+    volumes:
+      - "./public/:/public"
+      - "./output-order-service.jar:/output-order-service.jar"
+    environment:
+      - "TZ=America/Sao_Paulo"
+      - "SPRING_PROFILES_ACTIVE=prod"
+    entrypoint:
+      - "java"
+      - "-Dlog4j2.formatMsgNoLookups=true"
+      - "-jar"
+      - "-Xms1024m"
+      - "-Xmx2048m"
+      - "output-order-service.jar"
+    network_mode: bridge
