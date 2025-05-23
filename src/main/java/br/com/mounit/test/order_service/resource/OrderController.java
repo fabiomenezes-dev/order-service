@@ -2,6 +2,7 @@ package br.com.mounit.test.order_service.resource;
 
 import br.com.mounit.test.order_service.domain.dtos.OrderDTO;
 import br.com.mounit.test.order_service.domain.enuns.StatusEnum;
+import br.com.mounit.test.order_service.domain.exceptions.DuplicateOrderException;
 import br.com.mounit.test.order_service.domain.exceptions.OrderNotFoundException;
 import br.com.mounit.test.order_service.service.OrderInterface;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,7 +97,7 @@ public class OrderController {
             @Parameter(description = "Order data to be processed", required = true,
                     content = @Content(schema = @Schema(implementation = OrderDTO.class)))
             @Valid @RequestBody OrderDTO orderDTO,
-            HttpServletRequest request) throws OrderNotFoundException {
+            HttpServletRequest request) throws OrderNotFoundException, DuplicateOrderException {
         log.info(LOG_MSG_IP_ORIGEM, request.getRemoteAddr());
         log.info("Recebendo pedido: {}", orderDTO);
         return ResponseEntity.ok(orderInterface.process(orderDTO));

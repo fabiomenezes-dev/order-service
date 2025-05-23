@@ -3,6 +3,7 @@ package br.com.mounit.test.order_service.service;
 import br.com.mounit.test.order_service.domain.data.entities.OrderEntity;
 import br.com.mounit.test.order_service.domain.dtos.OrderDTO;
 import br.com.mounit.test.order_service.domain.dtos.ProductDTO;
+import br.com.mounit.test.order_service.domain.exceptions.DuplicateOrderException;
 import br.com.mounit.test.order_service.domain.exceptions.OrderNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ public interface OrderInterface {
 
     Page<OrderDTO> getAll(Pageable pageable);
 
-    String process(OrderDTO orderDTO) throws OrderNotFoundException;
+    String process(OrderDTO orderDTO) throws OrderNotFoundException, DuplicateOrderException;
 
     Page<Set<OrderDTO>> getAllByStatus(String status, Pageable pageable);
 

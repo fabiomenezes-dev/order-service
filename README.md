@@ -1,7 +1,11 @@
 # Order Service
 
-[![Licença](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status do Projeto](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
+![Java](https://img.shields.io/badge/Java-21-red)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-used-informational)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.5-brightgreen)
+![Docker](https://img.shields.io/badge/Docker-enabled-blue)
+[![Licença](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Descrição
 
