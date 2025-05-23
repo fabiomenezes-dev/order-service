@@ -98,7 +98,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void testReceiveOrder_Success() throws OrderNotFoundException {
+    void testReceiveOrder_Success() throws OrderNotFoundException, DuplicateOrderException {
         when(orderInterface.process(any())).thenReturn("Processamento concluído");
         ResponseEntity<String> result = orderController.receive(orderDTO, request);
 
